@@ -1,0 +1,470 @@
+<?xml version='1.0' encoding='utf-8'?>
+<job-scheduling-data
+	xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
+	version="2.0">
+	<pre-processing-commands>
+		<delete-jobs-in-group>*</delete-jobs-in-group>
+		<!-- clear all jobs in scheduler -->
+		<delete-triggers-in-group>*</delete-triggers-in-group>
+		<!-- clear all triggers in scheduler -->
+	</pre-processing-commands>
+	<processing-directives>
+		<!-- if there are any jobs/trigger in scheduler of same name (as in this file), overwrite them -->
+		<overwrite-existing-data>true</overwrite-existing-data>
+
+		<!-- if there are any jobs/trigger in scheduler of same name (as in this file), and over-write is false, ignore them rather then generating an error -->
+		<ignore-duplicates>false</ignore-duplicates>
+	</processing-directives>
+
+	<schedule>
+		<job>
+			<name>BPHPackageMsgJob</name>
+			<group>BPHPackageMsg</group>
+			<description>小额借贷记打包计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.BPHPackageServiceJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>BPHPackageMsgTrigger</name>
+				<group>BPHPackageMsgTriggers</group>
+				<job-name>BPHPackageMsgJob</job-name>
+				<job-group>BPHPackageMsg</job-group>
+				<!-- 小额打包程序每5分钟运行一次扫描  -->
+				<cron-expression>0 0/3 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+
+		<!--<trigger>
+			<simple>
+			<name>BPHPackageMsgTrigger</name>
+			<group>DEFAULT</group>
+			<job-name>BPHPackageMsgJob</job-name>
+			<repeat-count>-1</repeat-count>
+			repeat indefinitely  
+			<repeat-interval>300</repeat-interval>
+			every 300 seconds 
+			</simple>
+			</trigger>		
+		-->
+
+		<job>
+			<name>BepsAutoReceiptProcessJob</name>
+			<group>BepsDbitReply</group>
+			<description>小额借记自动超期回执处理任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.BepsAutoReceiptProcessJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job>
+
+		<trigger>
+			<cron>
+				<name>BepsAutoReceiptTrigger</name>
+				<group>BepsAutoReceiptTriggers</group>
+				<job-name>BepsAutoReceiptProcessJob</job-name>
+				<job-group>BepsDbitReply</job-group>
+				<!--"0 30/5 15-16 * * ?"	每天15:30分至16:55分每5分钟运行一次，开始于15:30，结束于16:55  -->
+				<cron-expression>0 30/5 15-16 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		
+		<!-- 日终处理 -->
+		<job>
+			<name>EODProcessJob</name>
+			<group>EODProcessJob</group>
+			<description>日终处理</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.EODProcessJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job>
+		
+		
+		<!--<trigger>
+			<cron>
+				<name>EODProcessJobTrigger</name>
+				<group>EODProcessJobTrigger</group>
+				<job-name>EODProcessJob</job-name>
+				<job-group>EODProcessJob</job-group>
+				<cron-expression>0 0/2 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+
+		-->
+		<trigger>
+			<cron>
+				<name>EODProcessJobTrigger</name>
+				<group>EODProcessJobTrigger</group>
+				<job-name>EODProcessJob</job-name>
+				<job-group>EODProcessJob</job-group>
+				<cron-expression>0 30 23 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		
+<!--		 读取CFT -->
+		<job>
+			<name>CFTInputJob</name>
+			<group>CFTInput</group>
+			<description>读取CFT</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.CFTFileInputJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>CFTInputJobTrigger</name>
+				<group>CFTInputJobTriggers</group>
+				<job-name>CFTInputJob</job-name>
+				<job-group>CFTInput</job-group>
+				<cron-expression>0 0/2 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+
+		<job>
+			<name>BEPSDDDCProcessJob</name>
+			<group>BEPSDDDC</group>
+			<description>定期借贷记业务处理计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.DDDCProcessJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>BEPSDDDCProcessTrigger</name>
+				<group>BEPSDDDCTriggers</group>
+				<job-name>BEPSDDDCProcessJob</job-name>
+				<job-group>BEPSDDDC</job-group>
+				<!-- 每30second运行一次扫描  -->
+				<cron-expression>0/30 * * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>SendMailJob</name>
+			<group>SendMail</group>
+			<description>发送Email计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.SendMailJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>SendMailTrigger</name>
+				<group>SendMailTriggers</group>
+				<job-name>SendMailJob</job-name>
+				<job-group>SendMail</job-group>
+				<!-- 每4分钟运行一次扫描  -->
+				<cron-expression>0 0/3 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>MChargePostingJob</name>
+			<group>ChargePosting</group>
+			<description>月收费记账计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.MChargePostingJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>MChargePostingTrigger</name>
+				<group>MChargePostingTriggers</group>
+				<job-name>MChargePostingJob</job-name>
+				<job-group>ChargePosting</job-group>
+				<!-- 每5分钟运行一次扫描  -->
+				<cron-expression>0 0/5 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>HVPSSubmitJob</name>
+			<group>PaymentSubmit</group>
+			<description>大额业务提交人行计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.HVPSPaymentSubmitJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>HVPSSubmitTrigger</name>
+				<group>HVPSSubmitTriggers</group>
+				<job-name>HVPSSubmitJob</job-name>
+				<job-group>PaymentSubmit</job-group>
+				<!-- 每4分钟运行一次扫描  -->
+				<cron-expression>0 0/3 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		
+		<job>
+			<name>SysCommunicationJob</name>
+			<group>SysCommunicationJob</group>
+			<description>根据通讯表信息来发送计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.SendBPHJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>SendBPHTrigger</name>
+				<group>SendBPHTriggers</group>
+				<job-name>SysCommunicationJob</job-name>
+				<job-group>SysCommunicationJob</job-group>
+				<!-- 每3分钟运行一次扫描  -->
+				<cron-expression>0 0/2 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>SysCommunicationStatusJob</name>
+			<group>SysCommunicationStatusJob</group>
+			<description>根据业务的终态来返回BPH 状态报文</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.SendStatusToBPHJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>SendBPHTStatusTrigger</name>
+				<group>SendBPHStatusTriggers</group>
+				<job-name>SysCommunicationStatusJob</job-name>
+				<job-group>SysCommunicationStatusJob</job-group>
+				<!-- 每3分钟运行一次扫描  -->
+				<cron-expression>0 0/2 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>ReportBuildJob</name>
+			<group>ReportBuild</group>
+			<description>生成客户日、周、月报告计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.BuildReportJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>ReportBuildTrigger</name>
+				<group>ReportBuildTriggers</group>
+				<job-name>ReportBuildJob</job-name>
+				<job-group>ReportBuild</job-group>
+				<!-- 每5分钟运行一次扫描  -->
+				<cron-expression>0 0/3 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>EPKProcessJob</name>
+			<group>EPKProcess</group>
+			<description>发送EPK计划任务</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.EPKProcessJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>EPKProcessTrigger</name>
+				<group>EPKProcessTriggers</group>
+				<job-name>EPKProcessJob</job-name>
+				<job-group>EPKProcess</job-group>
+				<!-- 每5分钟执行一次  每天7点开始18点结束-->
+				<cron-expression>0 0/3 7-18 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>FileUploadNormalTxProcessJob</name>
+			<group>FileUploadNormalTxProcess</group>
+			<description>磁盘导入普通业务处理</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.FileUploadPaymentProcessJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>FileUploadNormalTxProcessTrigger</name>
+				<group>FileUploadNormalTxProcessTriggers</group>
+				<job-name>FileUploadNormalTxProcessJob</job-name>
+				<job-group>FileUploadNormalTxProcess</job-group>
+				<!-- 每3分钟执行一次  -->
+				<cron-expression>0 0/3 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>InfoCenterAMLSenderJob</name>
+			<group>InfoCenterAMLSender</group>
+			<description>InfoCenter AML发送</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.InfoCenterAMLJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>InfoCenterAMLSenderTrigger</name>
+				<group>InfoCenterAMLSenderTriggers</group>
+				<job-name>InfoCenterAMLSenderJob</job-name>
+				<job-group>InfoCenterAMLSender</job-group>
+				<!-- 每天执行一次  -->
+				<cron-expression>0 25 18 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>InfoCenterH2HSenderJob</name>
+			<group>InfoCenterH2HSender</group>
+			<description>InfoCenter H2H发送</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.InfoCenterH2HJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>InfoCenterH2HSenderTrigger</name>
+				<group>InfoCenterH2HSenderTriggers</group>
+				<job-name>InfoCenterH2HSenderJob</job-name>
+				<job-group>InfoCenterH2HSender</job-group>
+				<!-- 每3分钟执行一次  -->
+				<cron-expression>0 0/5 8-20 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>InfoCenterERSenderJob</name>
+			<group>InfoCenterERSender</group>
+			<description>InfoCenter ER发送</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.InfoCenterERJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>InfoCenterERSenderTrigger</name>
+				<group>InfoCenterERSenderTriggers</group>
+				<job-name>InfoCenterERSenderJob</job-name>
+				<job-group>InfoCenterERSender</job-group>
+				<!-- 每天执行一次  -->
+				<cron-expression>0 0 18 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<job>
+			<name>InfoCenterYGXGSenderJob</name>
+			<group>InfoCenterYGXGSender</group>
+			<description>InfoCenter ygxg发送</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.InfoCenterYGXGJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>InfoCenterYGXGSenderTrigger</name>
+				<group>InfoCenterYGXGSenderTriggers</group>
+				<job-name>InfoCenterYGXGSenderJob</job-name>
+				<job-group>InfoCenterYGXGSender</job-group>
+				<!-- 每59分钟执行一次9~23  -->
+				<cron-expression>0 55 8-23 * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		
+		<job>
+			<name>InlineQueueJob</name>
+			<group>InlineQueueRelease</group>
+			<description>行内排队业务释放</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.InlineQueueJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+
+		<trigger>
+			<cron>
+				<name>InlineQueueTrigger</name>
+				<group>InlineQueueReleaseTriggers</group>
+				<job-name>InlineQueueJob</job-name>
+				<job-group>InlineQueueRelease</job-group>
+				<!-- 每30秒执行一次  -->
+				<cron-expression>0/30 * * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+		<!-- 自动预注资 -->
+		<job>
+			<name>AutoPreInjectFunds</name>
+			<group>AutoPreInjectFunds</group>
+			<description>自动预注资</description>
+			<job-class>
+				com.clear2pay.bph.quartz.job.AutoPreInjectJob
+			</job-class>
+			<durability>false</durability>
+			<recover>false</recover>			
+		</job>
+		<trigger>
+			<cron>
+				<name>AutoPreInjectFundsTrigger</name>
+				<group>AutoPreInjectFundsTriggers</group>
+				<job-name>AutoPreInjectFunds</job-name>
+				<job-group>AutoPreInjectFunds</job-group>
+				<!-- 每天执行一次  -->
+				<cron-expression>0/30 * * * * ?</cron-expression>
+			</cron>
+		</trigger>
+		
+	</schedule>
+</job-scheduling-data>
