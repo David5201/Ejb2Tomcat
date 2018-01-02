@@ -31,7 +31,7 @@ public class Myjob implements org.quartz.Job {
 			 
 			Trigger trigger = org.quartz.TriggerBuilder.newTrigger()
 				      .withIdentity("trigger1", "group1")
-				      .startNow()
+				      .startNow() 
 				      .withSchedule(org.quartz.SimpleScheduleBuilder.simpleSchedule()
 				              .withIntervalInSeconds(5)
 				              .repeatForever())
